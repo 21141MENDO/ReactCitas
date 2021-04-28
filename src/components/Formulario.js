@@ -1,9 +1,12 @@
 import React, { Fragment, useState } from "react";
+import uuid from 'shortid/index';
+import PropTypes from 'prop-types';
 
-const Formulario = () => {
+
+const Formulario = ({crearCita}) => {
 
   //crear State de citas se utilizan llaves por que es un objeto
-  const [cita, utilizarCita] = useState({
+  const [cita, actualizarCita] = useState({
     mascota: '',
     propietario: '',
     fecha: '',
@@ -16,7 +19,7 @@ const Formulario = () => {
 
   // Funcion que se ejecuta cada que el usuario escribe un input
   const actualizarState = e => {
-    utilizarCita({
+    actualizarCita({
         ...cita,
         [e.target.name] : e.target.value
     })
@@ -38,13 +41,25 @@ const Formulario = () => {
       if(mascota.trim() === ''|| propietario.trim() === ''|| fecha.trim() === ''|| hora.trim() === ''|| sintomas.trim() === ''){
         actualizarError(true);
           return;
-      } 
+      }
+      
+      //Eliminar mensaje previo
+    //   actualizarError(false);
 
-      //asignar un ID
+      //asignar un ID, se puden descargar librerias para generar id, npm i uuid y despues importamos import uuid from 'uuid/dist/v4';
+      cita.id = uuid();
 
       //crear cita
+      crearCita(cita);
 
       //reiniciar form
+      actualizarCita({
+        mascota: '',
+        propietario: '',
+        fecha: '',
+        hora: '',
+        sintomas: ''
+      });
   }
 
 
@@ -80,11 +95,11 @@ const Formulario = () => {
           value={propietario}
         />
         <label>Fecha</label>
-        <input type="date" name="fecha" className="u-full-width" onChange={actualizarState}/>
+        <input type="date" name="fecha" className="u-full-width" onChange={actualizarState} value={fecha}/>
         <label>Hora</label>
-        <input type="time" name="hora" className="u-full-width" onChange={actualizarState}/>
+        <input type="time" name="hora" className="u-full-width" onChange={actualizarState} value={hora}/>
         <label>Sìntomas</label>
-        <textarea className="u-full-width" name="sintomas" onChange={actualizarState}></textarea>
+        <textarea className="u-full-width" name="sintomas" onChange={actualizarState} value={sintomas}></textarea>
         <button type="submit" className="u-full-width button-primary">
           Agregar Cita
         </button>
@@ -92,5 +107,10 @@ const Formulario = () => {
     </Fragment>
   );
 };
+
+// los prop type son una forma de documentar tus componentes
+Formulario.propTypes = {
+    crearCita: PropTypes.func.isRequired
+}
 
 export default Formulario;
